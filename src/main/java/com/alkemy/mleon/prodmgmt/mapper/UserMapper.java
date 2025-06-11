@@ -2,16 +2,18 @@ package com.alkemy.mleon.prodmgmt.mapper;
 
 import com.alkemy.mleon.prodmgmt.dto.UserDTO;
 import com.alkemy.mleon.prodmgmt.enums.Role;
-import org.mapstruct.Mapper;
 import com.alkemy.mleon.prodmgmt.model.User;
+import org.mapstruct.Mapper;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+
 
 @Mapper(componentModel = "Spring")
 public interface UserMapper {
 
     default UserDTO toDTO(User user){
+        System.out.println("Converting User to UserDTO: " + user);
         if (user==null) return null;
         Set<String> roles = null;
         if (user.getRoles() !=null)
@@ -29,11 +31,17 @@ public interface UserMapper {
     }
 
     default User toEntity(UserDTO dto){
+        System.out.println("Converting UserDTO to User: " + dto);
         if (dto==null) return null;
         Set<Role> roles = null;
         if (dto.getRoles() !=null)
         {
-            roles= dto.getRoles().stream().map(Role::valueOf).collect(Collectors.toSet());
+            System.out.println("Converting roles from String to Role: " + dto.getRoles());
+            roles = dto.getRoles().stream()
+                    .map(r -> r.replaceAll("[\\[\\]\"]", "")) // Elimina corchetes y comillas si existen
+                    .map(String::trim) // Elimina espacios
+                    .map(Role::valueOf)
+                    .collect(Collectors.toSet());
         }
         return User.builder()
                 .id(dto.getId())
