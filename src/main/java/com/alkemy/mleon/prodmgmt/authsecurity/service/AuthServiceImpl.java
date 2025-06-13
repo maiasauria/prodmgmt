@@ -1,6 +1,5 @@
 package com.alkemy.mleon.prodmgmt.authsecurity.service;
 
-
 import com.alkemy.mleon.prodmgmt.authsecurity.dto.AuthRequest;
 import com.alkemy.mleon.prodmgmt.authsecurity.dto.AuthResponse;
 import com.alkemy.mleon.prodmgmt.dto.UserDTO;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,18 +35,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse register(UserDTO request) {
-        log.debug("Intentando registrar nuevo usuario: {}", request.getUsername());
+        log.info("AuthServiceImpl:register| Intentando registrar nuevo usuario: {}", request.getUsername());
 
-        // Check if the user already exists using the custom method
+        // Verificar si el usuario ya existe utilizando el método personalizado
         if (userRepository.existsUserByUsername(request.getUsername())) {
-            log.warn("Username {} already exists", request.getUsername());
-            //throw new UserAlreadyExistsException("Username already exists");
+            log.warn("El nombre de usuario {} ya existe", request.getUsername());
+            throw new IllegalArgumentException("El nombre de usuario ya existe");
         }
 
         // Map the UserDTO to User entity and encode the password
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        //user.setRoles(request.getRoles());
 
         // Save the new user to the repository
         User savedUser = userRepository.save(user);
@@ -70,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public AuthResponse authenticate(AuthRequest request) {
-        log.debug("Autenticando usuario: {}", request.getUsername());
+        log.info("AuthServiceImpl:authenticate| Autenticando usuario: {}", request.getUsername());
 
         try {
             authenticationManager.authenticate(
@@ -86,6 +83,8 @@ public class AuthServiceImpl implements AuthService {
                         return new UsernameNotFoundException("User not found");
                     });
 
+            log.info("Usuario {} encontrado, generando token JWT", user.getUsername());
+
             String jwtToken = jwtService.generateToken(user);
             log.info("Usuario {} autenticado exitosamente", user.getUsername());
             user.getAuthorities().stream()
@@ -96,9 +95,15 @@ public class AuthServiceImpl implements AuthService {
                     .token(jwtToken)
                     .build();
 
-        } catch (AuthenticationException e) {
-            log.warn("Falló autenticación para usuario: {}", request.getUsername());
-            throw new BadCredentialsException("Invalid credentials");
+        } catch (BadCredentialsException e) {
+            log.warn("Credenciales inválidas para usuario: {}", request.getUsername());
+            throw new BadCredentialsException("Credenciales inválidas");
+        } catch (UsernameNotFoundException e) {
+            log.error("Usuario no existe: {}", request.getUsername());
+            throw e;
+        } catch (Exception e) {
+            log.error("Error inesperado durante la autenticación del usuario: {}", request.getUsername(), e);
+            throw new RuntimeException("Error interno del servidor");
         }
     }
 }

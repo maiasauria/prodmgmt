@@ -41,7 +41,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("🛡️ Configurando seguridad");
+        log.info("SecurityConfig : securityFilterChain | 🛡️ Configurando seguridad");
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -58,6 +58,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authProvider() {
+        log.info("SecurityConfig : authProvider | Configurando proveedor de autenticación");
         var provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(new BCryptPasswordEncoder());
@@ -66,11 +67,13 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
+        log.info("SecurityConfig : authManager | Configurando administrador de autenticación");
         return config.getAuthenticationManager();
     }
 
     @Bean
     public CorsConfigurationSource corsConfig() {
+        log.info("SecurityConfig : corsConfig | Configurando CORS");
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:9080", "https://localhost:9443", "http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -85,6 +88,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        log.info("SecurityConfig : passwordEncoder | Configurando codificador de contraseñas");
         return new BCryptPasswordEncoder();
     }
 }

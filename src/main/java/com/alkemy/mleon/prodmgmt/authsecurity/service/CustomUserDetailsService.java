@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.debug("Intentando cargar usuario por nombre: {}", username);
+        log.info(" CustomUserDetailsService:loadUserByUsername | Intentando cargar usuario con nombre: {}", username);
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> {
@@ -35,10 +35,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
                 });
 
-        log.info("Usuario cargado exitosamente: {}", username);
+        log.info("Usuario encontrado en la BD : {}", username);
         user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .forEach(authority -> log.info("User authority en custom user details: {}", authority));
+
+        log.info("Detalles del usuario cargado: {}", user);
         return user;
     }
 }

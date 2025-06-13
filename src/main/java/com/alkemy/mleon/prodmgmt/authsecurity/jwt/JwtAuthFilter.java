@@ -43,6 +43,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("JwtAuthFilter : doFilterInternal || Processing request for path: {}", request.getServletPath());
+
         String path = request.getServletPath();
 
         if (WHITELISTED_PATHS.stream().anyMatch(path::startsWith)) {
@@ -75,6 +77,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
+        log.info("JwtAuthFilter : extractToken || Extracting token from request headers");
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         return (authHeader != null && authHeader.startsWith(BEARER_PREFIX))
                 ? authHeader.substring(BEARER_PREFIX.length())
