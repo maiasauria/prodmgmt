@@ -30,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 

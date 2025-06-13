@@ -13,12 +13,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class OpenApiConfig implements WebMvcConfigurer {
 
-    private static final String SWAGGER_UI_PATH = "/swagger-ui.html";
+    private static final String SWAGGER_UI_PATH = "/clase10-0.0.1-SNAPSHOT/swagger-ui/index.html";
     private static final String API_TITLE = "API de ..";
-    private static final String API_VERSION = "1.0";
+    private static final String API_VERSION = "3.1.0";
     private static final String API_DESCRIPTION = "API para gestión de ";
     private static final String AUTHMESSAGE = "Bearer Authentication ";
-
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
@@ -30,13 +29,12 @@ public class OpenApiConfig implements WebMvcConfigurer {
                         .addList(AUTHMESSAGE))
                 .components(new Components()
                         .addSecuritySchemes(AUTHMESSAGE,
-                                new SecurityScheme()
+                                new io.swagger.v3.oas.models.security.SecurityScheme()
                                         .name(AUTHMESSAGE)
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")));
     }
-
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addRedirectViewController("/", SWAGGER_UI_PATH);
@@ -45,4 +43,3 @@ public class OpenApiConfig implements WebMvcConfigurer {
     }
 
 }
-
