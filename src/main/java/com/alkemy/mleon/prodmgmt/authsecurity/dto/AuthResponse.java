@@ -11,11 +11,6 @@ DTO para la respuesta de autenticación.
  */
 @Data
 @Builder
-@AllArgsConstructor
-@RequiredArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Excluye campos nulos del JSON
-
 public class AuthResponse {
     private String token;
-    private String message; // Nuevo campo para mensajes personalizados
 }

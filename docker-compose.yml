@@ -1,41 +1,41 @@
-version: "3.9" # Versión del archivo de configuración de Docker Compose
-services: # Definición de los servicios que componen la aplicación
-  spring-api-image: # Nombre del servicio
-    image: spring-api-image # Nombre de la imagen
-    container_name: spring-api-container # Nombre del contenedor
-    build: # Construcción de la imagen
-      context: . # a partir de que lo vamos a construir, el dockerfile
-      dockerfile: Dockerfile # Nombre del Dockerfile
+services:
+
+  spring-api-image:
+    image: spring-api-image
+    container_name: spring-api-container
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080" #Puerto local y de docker
+      - "8080:8080"
     networks:
-      - spring-network # Red a la que se conecta el servicio
+      - spring-network
     depends_on:
-      mongodb: # Dependencia del servicio mongodb
-        condition: service_healthy # Condición de salud del servicio mongodb
+      mongodb:
+        condition: service_healthy
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://rootalkemy:passwordroot@mongodb:27017/tienda?authSource=admin # URI de conexión a MongoDB
+      - SPRING_DATA_MONGODB_URI=mongodb://rootalkemy:passwordroot@mongodb:27017/tienda?authSource=admin
   mongodb:
-    image: mongodb/mongodb-atlas-local # Imagen de MongoDB
+    image: mongodb/mongodb-atlas-local
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=rootalkemy
-      - MONGO_INITDB_ROOT_PASSWORD=passwordroot
-      - MONGO_INITDB_DATABASE=tienda # Base de datos inicial
+      - MONGODB_INITDB_ROOT_USERNAME=rootalkemy
+      - MONGODB_INITDB_ROOT_PASSWORD=passwordroot
+      - MONGO_INITDB_DATABASE=tienda
     ports:
-      - "27019:27017" # Puerto local y de docker para MongoDB definimos dos puertos distintos.
+      - "27017:27017"
     networks:
-      - spring-network # Red a la que se conecta el servicio
+      - spring-network
     volumes:
-      - data:/data/db # Volumen para persistencia de datos
-      - config:/data/configdb # Volumen para configuración de MongoDB
+      - data:/data/db
+      - config:/data/configdb
     healthcheck:
-      test: [ "CMD", "mongosh", "-u", "user", "-p", "pass", "--eval", "db.adminCommand('ping')" ]
+      test: [ "CMD", "mongosh", "-u", "rootalkemy", "-p", "passwordroot", "--eval", "db.adminCommand('ping')" ]
       interval: 5s
       timeout: 30s
       retries: 10
 networks:
-  spring-network: # Definición de la red a la que se conectan los servicios
-    driver: bridge # Tipo de red, en este caso una red puente
+  spring-network:
+    driver: bridge
 volumes:
-  data: # Volumen para persistencia de datos de MongoDB
-  config: # Volumen para configuración de MongoDB
+  data:
+  config:
