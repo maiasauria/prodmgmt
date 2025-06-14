@@ -57,5 +57,15 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
+    @Override
+    public ProductDto updateProduct(ProductDto productDto) {
+        // Asumiendo que el ID del producto está presente en el DTO
+        if (productDto.getId() == null || !productRepository.existsById(productDto.getId())) {
+            throw new RuntimeException("Product not found");
+        }
+        Product product = productMapper.toEntity(productDto);
+        Product updatedProduct = productRepository.save(product);
+        return productMapper.toDTO(updatedProduct);
+    }
 
 }

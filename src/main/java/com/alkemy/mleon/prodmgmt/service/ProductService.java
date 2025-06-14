@@ -14,4 +14,6 @@ public interface ProductService {
     void deleteProduct(String id);
 
     ProductDto getByName(String nombre);
+
+    ProductDto updateProduct(ProductDto productDto); // Assuming you want to add an update method
 }

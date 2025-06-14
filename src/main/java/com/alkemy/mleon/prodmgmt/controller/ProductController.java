@@ -44,4 +44,10 @@ public class ProductController {
         ProductDto product = productService.getByName(name);
         return ResponseEntity.ok(product);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
+        ProductDto updatedProduct = productService.createProduct(productDto); // Assuming createProduct can also handle updates
+        return ResponseEntity.ok(updatedProduct);
+    }
 }
