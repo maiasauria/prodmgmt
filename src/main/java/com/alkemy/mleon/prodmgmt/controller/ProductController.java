@@ -2,23 +2,39 @@ package com.alkemy.mleon.prodmgmt.controller;
 
 import com.alkemy.mleon.prodmgmt.dto.ProductDto;
 import com.alkemy.mleon.prodmgmt.service.ProductService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
     private final ProductService productService;
 
     @GetMapping
+    @ApiResponse(responseCode = "201", description = "Consulta exitosa")
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida")
     public ResponseEntity<List<ProductDto>> listAllProducts() {
+        log.info("ProductController: listAllProducts | 🛍️ Listando productos");
         List<ProductDto> products = productService.listProducts();
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/async")
+    @ApiResponse(responseCode = "201", description = "Consulta exitosa")
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+    public CompletableFuture<ResponseEntity<List<ProductDto>>> listAllProductsAsync() {
+        log.info("ProductController: listAllProductsAsync | 🛍️ Listando productos");
+        return productService.listProductsAsync()
+                .thenApply(products -> ResponseEntity.ok(products));
     }
 
     @GetMapping("/{id}")

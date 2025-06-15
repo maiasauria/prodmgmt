@@ -33,30 +33,31 @@ public class AuthServiceImpl implements AuthService {
      * @return AuthResponse que contiene el token JWT del usuario registrado
      */
 
-    @Override
-    public AuthResponse register(UserDTO request) {
-        log.info("AuthServiceImpl:register| Intentando registrar nuevo usuario: {}", request.getUsername());
+@Override
+public AuthResponse register(UserDTO request) {
+    log.info("AuthServiceImpl:register| Intentando registrar nuevo usuario: {}", request.getUsername());
 
-        // Verificar si el usuario ya existe utilizando el método personalizado
-        if (userRepository.existsUserByUsername(request.getUsername())) {
-            log.warn("El nombre de usuario {} ya existe", request.getUsername());
-            throw new IllegalArgumentException("El nombre de usuario ya existe");
-        }
-
-        // Map the UserDTO to User entity and encode the password
-        User user = userMapper.toEntity(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        // Save the new user to the repository
-        User savedUser = userRepository.save(user);
-        log.info("Nuevo usuario registrado con ID: {}", savedUser.getId());
-
-        // Generate a JWT token for the newly registered user
-        String jwtToken = jwtService.generateToken(user);
-        return AuthResponse.builder()
-                .token(jwtToken)
-                .build();
+    // Verificar si el usuario ya existe
+    if (userRepository.existsUserByUsername(request.getUsername())) {
+        log.warn("El nombre de usuario {} ya existe", request.getUsername());
+        throw new BadCredentialsException("El nombre de usuario ya está en uso");
     }
+
+    // Mapear UserDTO a User y codificar la contraseña
+    User user = userMapper.toEntity(request);
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+    // Guardar el nuevo usuario en el repositorio
+    User savedUser = userRepository.save(user);
+    log.info("Nuevo usuario registrado con ID: {}", savedUser.getId());
+
+    // Generar un token JWT para el usuario registrado
+    String jwtToken = jwtService.generateToken(user);
+    return AuthResponse.builder()
+            .token(jwtToken)
+            .message("Usuario registrado exitosamente")
+            .build();
+}
 
     /**
      * Autentica un usuario con sus credenciales.
@@ -70,18 +71,19 @@ public class AuthServiceImpl implements AuthService {
         log.info("AuthServiceImpl:authenticate| Autenticando usuario: {}", request.getUsername());
 
         try {
+
+            User user = userRepository.findByUsername(request.getUsername())
+                    .orElseThrow(() -> {
+                        log.error("Usuario no encontrado después de autenticación exitosa: {}", request.getUsername());
+                        return new UsernameNotFoundException(request.getUsername());
+                    });
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getUsername(),
                             request.getPassword()
                     )
             );
-
-            User user = userRepository.findByUsername(request.getUsername())
-                    .orElseThrow(() -> {
-                        log.error("Usuario no encontrado después de autenticación exitosa: {}", request.getUsername());
-                        return new UsernameNotFoundException("User not found");
-                    });
 
             log.info("Usuario {} encontrado, generando token JWT", user.getUsername());
 
@@ -93,6 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
             return AuthResponse.builder()
                     .token(jwtToken)
+                    .message("Sesion iniciada exitosamente")
                     .build();
 
         } catch (BadCredentialsException e) {

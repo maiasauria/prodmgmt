@@ -5,11 +5,13 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@Slf4j
 @Configuration
 public class OpenApiConfig implements WebMvcConfigurer {
 
@@ -37,6 +39,7 @@ public class OpenApiConfig implements WebMvcConfigurer {
     }
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+        log.debug("OpenApiConfig: addViewControllers | Configurando controladores de vista para Swagger UI");
         registry.addRedirectViewController("/", SWAGGER_UI_PATH);
         registry.addRedirectViewController("/swagger-ui", SWAGGER_UI_PATH);
         registry.addViewController("/swagger-ui/").setViewName("forward:/swagger-ui/index.html");

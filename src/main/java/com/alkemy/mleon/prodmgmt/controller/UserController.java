@@ -36,9 +36,15 @@ public class UserController {
 
     @PostMapping
     @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+    @ApiResponse(responseCode = "409", description = "El usuario ya existe")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
-        UserDTO creado = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        try {
+            UserDTO creado = userService.createUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
     }
 
     @PutMapping("/{id}")
