@@ -1,4 +1,4 @@
-package com.alkemy.mleon.prodmgmt.model;
+package com.alkemy.mleon.prodmgmt.enums;
 
 public enum Color {
     WHITE, BLACK, GREEN;

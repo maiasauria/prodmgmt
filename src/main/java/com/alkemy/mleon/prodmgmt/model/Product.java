@@ -1,5 +1,6 @@
 package com.alkemy.mleon.prodmgmt.model;
 
+import com.alkemy.mleon.prodmgmt.enums.Color;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

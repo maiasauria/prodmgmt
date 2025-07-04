@@ -3,7 +3,7 @@ package com.alkemy.mleon.prodmgmt.authsecurity.controller;
 import com.alkemy.mleon.prodmgmt.authsecurity.dto.AuthRequest;
 import com.alkemy.mleon.prodmgmt.authsecurity.dto.AuthResponse;
 import com.alkemy.mleon.prodmgmt.authsecurity.service.AuthService;
-import com.alkemy.mleon.prodmgmt.dto.UserDTO;
+import com.alkemy.mleon.prodmgmt.dto.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody UserDTO request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody UserDto request) {
         try {
             return ResponseEntity.ok(authService.register(request));
         } catch (IllegalArgumentException e) {
@@ -34,8 +34,7 @@ public class AuthController {
                     .token(null)
                     .message("Error de credenciales: " + e.getMessage())
                     .build());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body(AuthResponse.builder()
                     .token(null)
                     .message("Error interno del servidor: " + e.getMessage())
@@ -47,15 +46,10 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         try {
             return ResponseEntity.ok(authService.authenticate(request));
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(404).body(AuthResponse.builder()
+        } catch (BadCredentialsException | UsernameNotFoundException e) {
+            return ResponseEntity.status(400).body(AuthResponse.builder()
                     .token(null)
-                    .message("Usuario no encontrado: " + e.getMessage())
-                    .build());
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401).body(AuthResponse.builder()
-                    .token(null)
-                    .message("Credenciales incorrectas: " + e.getMessage())
+                    .message("Credenciales inválidas: " + e.getMessage())
                     .build());
         } catch (Exception e) {
             return ResponseEntity.status(500).body(AuthResponse.builder()

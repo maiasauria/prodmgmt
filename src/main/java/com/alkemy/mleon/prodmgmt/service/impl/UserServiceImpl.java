@@ -1,6 +1,6 @@
 package com.alkemy.mleon.prodmgmt.service.impl;
 
-import com.alkemy.mleon.prodmgmt.dto.UserDTO;
+import com.alkemy.mleon.prodmgmt.dto.UserDto;
 import com.alkemy.mleon.prodmgmt.mapper.UserMapper;
 import com.alkemy.mleon.prodmgmt.model.User;
 import com.alkemy.mleon.prodmgmt.repository.UserRepository;
@@ -19,21 +19,21 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public UserDTO createUser(UserDTO user) {
+    public UserDto createUser(UserDto user) {
         User newUser = userMapper.toEntity(user); // Convert UserDTO to User entity
         User savedUser = userRepository.save(newUser);
         return userMapper.toDTO(savedUser);
     }
 
     @Override
-    public List<UserDTO> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(userMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDTO updateUser(String id, UserDTO userDTO) {
+    public UserDto updateUser(String id, UserDto userDTO) {
         // Obtener la entidad existente
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));

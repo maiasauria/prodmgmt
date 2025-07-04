@@ -1,6 +1,6 @@
 package com.alkemy.mleon.prodmgmt.controller;
 
-import com.alkemy.mleon.prodmgmt.dto.UserDTO;
+import com.alkemy.mleon.prodmgmt.dto.UserDto;
 import com.alkemy.mleon.prodmgmt.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,8 +29,8 @@ public class UserController {
             summary = "Obtener todos los usuarios",
             description = "Devuelve una lista con todas los usuarios del sistema"
     )
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> lista = userService.getAllUsers();
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> lista = userService.getAllUsers();
         return ResponseEntity.ok(lista);
     }
 
@@ -38,9 +38,9 @@ public class UserController {
     @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
     @ApiResponse(responseCode = "400", description = "Solicitud inválida")
     @ApiResponse(responseCode = "409", description = "El usuario ya existe")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
         try {
-            UserDTO creado = userService.createUser(user);
+            UserDto creado = userService.createUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
@@ -58,10 +58,10 @@ public class UserController {
             @ApiResponse(responseCode = "404",
                     description = "Usuario no encontrado")
     })
-    public ResponseEntity<UserDTO> actualizar(
+    public ResponseEntity<UserDto> actualizar(
             @PathVariable String id,
-            @RequestBody UserDTO userDTO) {
-        UserDTO actualizado = userService.updateUser(id, userDTO);
+            @RequestBody UserDto userDTO) {
+        UserDto actualizado = userService.updateUser(id, userDTO);
         return ResponseEntity.ok(actualizado);
     }
 

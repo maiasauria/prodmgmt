@@ -18,5 +18,5 @@ public interface ProductService {
 
     ProductDto getByName(String nombre);
 
-    ProductDto updateProduct(ProductDto productDto); // Assuming you want to add an update method
+    ProductDto updateProduct(ProductDto productDto);
 }

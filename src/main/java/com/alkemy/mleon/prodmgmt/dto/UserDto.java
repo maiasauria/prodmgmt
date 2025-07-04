@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
-public class UserDTO {
+public class UserDto {
 
     @Id
     private  String id;

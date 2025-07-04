@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 
 /**
  * DTO para la solicitud de autenticación.
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
 public class AuthRequest {
     @NotBlank
     @Email

@@ -5,12 +5,11 @@ import com.alkemy.mleon.prodmgmt.service.ProductService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/products")
@@ -27,15 +26,15 @@ public class ProductController {
         List<ProductDto> products = productService.listProducts();
         return ResponseEntity.ok(products);
     }
-
-    @GetMapping("/async")
-    @ApiResponse(responseCode = "201", description = "Consulta exitosa")
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida")
-    public CompletableFuture<ResponseEntity<List<ProductDto>>> listAllProductsAsync() {
-        log.info("ProductController: listAllProductsAsync | 🛍️ Listando productos");
-        return productService.listProductsAsync()
-                .thenApply(products -> ResponseEntity.ok(products));
-    }
+// Lo dejo comentado porque no pude hacer que funcione correctamente
+//    @GetMapping("/async")
+//    @ApiResponse(responseCode = "201", description = "Consulta exitosa")
+//    @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+//    public CompletableFuture<ResponseEntity<List<ProductDto>>> listAllProductsAsync() {
+//        log.info("ProductController: listAllProductsAsync | 🛍️ Listando productos");
+//        return productService.listProductsAsync()
+//                .thenApply(products -> ResponseEntity.ok(products));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
@@ -46,7 +45,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
         ProductDto createdProduct = productService.createProduct(productDto);
-        return ResponseEntity.ok(createdProduct);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
     @DeleteMapping("/{id}")

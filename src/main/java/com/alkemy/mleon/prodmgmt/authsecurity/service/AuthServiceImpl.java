@@ -2,7 +2,7 @@ package com.alkemy.mleon.prodmgmt.authsecurity.service;
 
 import com.alkemy.mleon.prodmgmt.authsecurity.dto.AuthRequest;
 import com.alkemy.mleon.prodmgmt.authsecurity.dto.AuthResponse;
-import com.alkemy.mleon.prodmgmt.dto.UserDTO;
+import com.alkemy.mleon.prodmgmt.dto.UserDto;
 import com.alkemy.mleon.prodmgmt.mapper.UserMapper;
 import com.alkemy.mleon.prodmgmt.model.User;
 import com.alkemy.mleon.prodmgmt.repository.UserRepository;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
      */
 
 @Override
-public AuthResponse register(UserDTO request) {
+public AuthResponse register(UserDto request) {
     log.info("AuthServiceImpl:register| Intentando registrar nuevo usuario: {}", request.getUsername());
 
     // Verificar si el usuario ya existe
@@ -103,7 +103,7 @@ public AuthResponse register(UserDTO request) {
             throw new BadCredentialsException("Credenciales inválidas");
         } catch (UsernameNotFoundException e) {
             log.error("Usuario no existe: {}", request.getUsername());
-            throw e;
+            throw new UsernameNotFoundException("Usuario no encontrado: " + request.getUsername());
         } catch (Exception e) {
             log.error("Error inesperado durante la autenticación del usuario: {}", request.getUsername(), e);
             throw new RuntimeException("Error interno del servidor");

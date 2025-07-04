@@ -1,6 +1,5 @@
 package com.alkemy.mleon.prodmgmt.dto;
 
-import com.alkemy.mleon.prodmgmt.model.Color;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
